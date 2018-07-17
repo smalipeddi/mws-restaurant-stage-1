@@ -171,22 +171,10 @@ createRestaurantHTML = (restaurant) => {
   * Add srcset for images based on Device Pixel Ratio
   */
   var small_images = (restaurant_photograph.split('.')[0]).concat("-1x.jpg");
-  console.log("small_images = " + small_images);
   var large_images = (restaurant_photograph.split('.')[0]).concat("-2x.jpg");
-  console.log("large_images = " + large_images);
   image.srcset = "images/" + small_images + " 1x" + ',' +  "images/" + large_images +  " 2x";
-  console.log("image.srcset = " +image.srcset);
-
-  /**
-  * Add srcset for images based on w
-  */
-
-  // var small_images = (restaurant_photograph.split('.')[0]).concat("-1x.jpg");
-  // var large_images = (restaurant_photograph.split('.')[0]).concat("-2x.jpg");
-  // image.srcset = "images/" + small_images + " 600w" + ',' +  "images/" + large_images +  " 300w";
-
-
-  image.src = "images/"+ small_images;
+  
+  image.src = "img/"+ restaurant_photograph;
   image.sizes = "(max-width: 325px) 100vw 50vw";
   li.append(image);
 

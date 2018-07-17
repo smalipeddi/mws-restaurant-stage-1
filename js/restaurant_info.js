@@ -101,7 +101,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.srcset = "banners/" + large_images + " 600w" + ',' +  "banners/" + small_images +  " 300w";
 
   image.src = "banners/"+ large_images;
-  console.log(image.src);
   image.sizes = "(max-width: 325px) 100vw 50vw";
 
   const cuisine = document.getElementById('restaurant-cuisine');

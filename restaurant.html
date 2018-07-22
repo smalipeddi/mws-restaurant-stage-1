@@ -55,12 +55,15 @@
     </section>
     <!-- end restaurant -->
      <!-- Beginning map -->
+    <label class="hidden" tabindex="0" for="map-container">Restaurants Listings Map</label>
     <section id="map-container">
-      <div id="map"></div>
+      <div id="map" tabindex="0" aria-label="Google Maps for Restaurants"  role="application"></div>
     </section>
     <!-- End map -->
     <!-- Beginning reviews -->
+   
     <section id="reviews-container" tabindex="0">
+      <label class="hidden" tabindex="0" for="reviews-list">Restaurant Reviews List</label>
       <ul id="reviews-list" ></ul>
     </section>
     <!-- End reviews -->
@@ -68,7 +71,7 @@
   <!-- End main -->
 
   <!-- Beginning footer -->
-  <footer id="footer">
+  <footer id="footer" tabindex="0">
     Copyright (c) 2017 
     <a href="/">
       <strong>Restaurant Reviews</strong>

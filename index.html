@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <header>
+  <header tabindex="0">
     <div>
       <h1>
         <a href="/">Restaurant Reviews</a></h1>
@@ -17,11 +17,12 @@
   </header>
 
   <main id="maincontent">
+    <label class="hidden" tabindex="0" for="map-container">Restaurants Listings Map</label>
     <section id="map-container">
-      <div id="map"></div>
+      <div id="map" tabindex="0" aria-label="Google Maps for Restaurants"  role="application"></div>
     </section>
     <section id="restaurants-container">
-      <div class="filter-options">
+      <div class="filter-options"  tabindex="0">
         <h2>Filter Results</h2>
         <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
           <option value="all">All Neighborhoods</option>
@@ -31,6 +32,7 @@
         </select>
       </div>
       <nav aria-label="restaurants-list">
+        <label class="hidden" tabindex="0" for="restaurants-list">Restaurants List</label>
         <ul id="restaurants-list"></ul>
       </nav>
       
@@ -45,7 +47,7 @@
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap"></script> -->
 
 
-  <footer id="footer">
+  <footer id="footer" tabindex="0">
     Copyright (c) 2017 
     <a href="/">
       <strong>Restaurant Reviews</strong>

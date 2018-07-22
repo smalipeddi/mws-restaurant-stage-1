@@ -109,8 +109,7 @@ nav #breadcrumb {
     background-color: #eee;
     font-size: 17px;
     margin: 0;
-  /*  width: 100%;*/
-
+  
 }
 
 /* Display list items side by side */
@@ -324,8 +323,7 @@ button {
 
 #reviews-container {
   border-top: 1px solid #fff;
- /* padding: 30px 40px 80px;
-*/
+
 }
 
 #reviews-container h2 {
@@ -402,16 +400,6 @@ main {
 
 }
 
-.hidden{
-  position: absolute;
-  left: -10000px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-
 /********************************/
 /* FLEX LAYOUT FOR DETAILS PAGE */
 /********************************/
@@ -434,8 +422,7 @@ main {
 .inside header {
   order: 1;
   flex: 1 0 100%;
- /* width: calc(100% - 80px);
-*/
+ 
 }
 
 

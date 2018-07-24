@@ -1,21 +1,8 @@
 let restaurants,
   neighborhoods,
-  cuisines
-var newMap
-var markers = []
-
-
-/**
- * Register Service Worker 
- */
-if(navigator.serviceWorker){
-  navigator.serviceWorker.register('../service-worker.js' , { scope : '/' }).then(function(){
-    console.log("Service  Worker registered succesfully");
-  }).catch(function(error){
-    console.log("Service Worker registration is unsuccessful");
-  });
-}
-
+  cuisines,newMap,markers = [];
+// var newMap
+// let markers = []
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -85,7 +72,7 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
  * Initialize leaflet map, called from HTML.
  */
 initMap = () => {
-  self.newMap = L.map('map', {
+  newMap = L.map('map', {
         center: [40.722216, -73.987501],
         zoom: 12,
         scrollWheelZoom: false

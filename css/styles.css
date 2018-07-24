@@ -291,8 +291,8 @@ button {
 }
 
 .inside #restaurant-img {
-  width: 100%;
-  max-height: 300px;
+  max-width: 100%;
+  max-height: 450px;
   
 }
 

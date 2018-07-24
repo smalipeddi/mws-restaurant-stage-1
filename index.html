@@ -4,6 +4,7 @@
 <head>
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <link rel="stylesheet" href="css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
   <title>Restaurant Reviews</title>
 </head>
@@ -11,18 +12,21 @@
 <body>
   <header tabindex="0">
     <div>
-      <h1>
-        <a href="/">Restaurant Reviews</a></h1>
+      <h1>   
+        <a href="/">Restaurant Reviews</a>
+      </h1>
     </div>
   </header>
 
   <main id="maincontent">
+    <label class="hidden" tabindex="0" for="map-container">Restaurants Listings Map</label>
     <section id="map-container">
       <div id="map" tabindex="0" aria-label=Leaflet Maps for Restaurants"  role="application"></div>
     </section>
     <section id="restaurants-container">
       <div class="filter-options"  tabindex="0">
         <h2>Filter Results</h2>
+        <div class="dropdown-area">
         <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
           <option value="all">All Neighborhoods</option>
         </select>
@@ -30,8 +34,10 @@
           <option value="all">All Cuisines</option>
         </select>
       </div>
+      </div>
       <nav aria-label="restaurants-list">
-        <ul id="restaurants-list"></ul>
+        <label class="hidden" tabindex="0" for="restaurants-list">Restaurants List</label>
+        <ul id="restaurants-list" role="navigation" aria-label="restaurants-list"></ul>
       </nav>
     </section>
   </main>

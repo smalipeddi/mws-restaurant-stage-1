@@ -13,7 +13,7 @@
    crossorigin=""/>
 
   <!-- Responsive Meta Tag -->
-  <meta name= “viewport” content=”width = device-width ,initial-scale = 1”>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <!-- Encoding -->
   <meta charset="utf-8">
 
@@ -31,7 +31,7 @@
     </div>
     <!-- Beginning breadcrumb -->
     <nav aria-label="Breadcrumb">
-      <ul id="breadcrumb" tabindex="0">
+      <ul id="breadcrumb" role="navigation" aria-label="Breadcrumb" tabindex="0">
         <li>
           <a href="/">Home</a>
         </li>
@@ -47,7 +47,7 @@
 
     <!-- Beginning restaurant -->
     <section id="restaurant-container" >
-      <h1 id="restaurant-name" tabindex="0"></h1>
+      <h2 id="restaurant-name" tabindex="0"></h2>
       <img id="restaurant-img" tabindex="0">
       <p id="restaurant-cuisine" tabindex="0"></p>
       <p id="restaurant-address" tabindex="0"></p>
@@ -55,6 +55,7 @@
     </section>
     <!-- end restaurant -->
      <!-- Beginning map -->
+    <label class="hidden" tabindex="0" for="map-container">Restaurants Listings Map</label>
     <section id="map-container">
       <div id="map" tabindex="0" aria-label="Leaflet Maps for Restaurants"  role="application"></div>
     </section>
@@ -62,7 +63,8 @@
     <!-- Beginning reviews -->
    
     <section id="reviews-container" tabindex="0">
-      <ul id="reviews-list" ></ul>
+      <label class="hidden" tabindex="0" for="reviews-list">Restaurant Reviews List</label>
+      <ul id="reviews-list" role="navigation" aria-label="reviews-list"></ul>
     </section>
     <!-- End reviews -->
   </main>

@@ -1,6 +1,10 @@
+/*eslint no-unused-vars: ["error", { "vars": "local" }]*/
+/* eslint event: "off"*/
 /**
  * Common database helper functions.
  */
+
+//import idb from 'idb';
 class DBHelper {
 
   /**
@@ -8,23 +12,45 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
+    const port = 1337; // Changed this to your server port
+    return `http://localhost:${port}/restaurants`;
   }
 
   /**
-   * Fetch all restaurants.
+   * Fetch all restaurants from server and store in database .
    */
   static fetchRestaurants(callback) {
+    
     fetch(DBHelper.DATABASE_URL)
-    .then((resp) => resp.json())
-    .then(function(data) {
-      const restaurants =  data.restaurants;
-      callback(null, restaurants);
-    })
-    .catch(function(error) {
-      callback(error, null);
-    });   
+      .then((resp) => resp.json())
+      .then((data)  =>  {
+        
+        /* Open database  and create object store  */
+        const dbPromise = idb.open("restaurantDb" , 1 , (upgradeDb) => {
+          if (!upgradeDb.objectStoreNames.contains("restaurants")) {
+            upgradeDb.createObjectStore("restaurants", { keyPath: "id" });
+          }
+        });
+      
+        /* Store data in database */
+        dbPromise.then(db => {
+          if(!db) return ;
+          const tx = db.transaction("restaurantDb", "readwrite");
+          let store = tx.objectStore("restaurantDb");
+          
+          /* iterate through data and store in db */
+
+          data.forEach(restaurant => {
+            store.put(restaurant);
+          });
+          return tx.complete;
+        });
+        // return store.getAll();
+        callback(null, data);
+        
+      }).catch(error => {
+        callback("Request Falied " + error , null);
+      });
   }
 
   /**
@@ -40,7 +66,7 @@ class DBHelper {
         if (restaurant) { // Got the restaurant
           callback(null, restaurant);
         } else { // Restaurant does not exist in the database
-          callback('Restaurant does not exist', null);
+          callback("Restaurant does not exist", null);
         }
       }
     });
@@ -87,11 +113,11 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        let results = restaurants
-        if (cuisine != 'all') { // filter by cuisine
+        let results = restaurants;
+        if (cuisine != "all") { // filter by cuisine
           results = results.filter(r => r.cuisine_type == cuisine);
         }
-        if (neighborhood != 'all') { // filter by neighborhood
+        if (neighborhood != "all") { // filter by neighborhood
           results = results.filter(r => r.neighborhood == neighborhood);
         }
         callback(null, results);
@@ -109,9 +135,9 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
         // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
+        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
         callback(null, uniqueNeighborhoods);
       }
     });
@@ -127,9 +153,9 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all cuisines from all restaurants
-        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
         // Remove duplicates from cuisines
-        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
+        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
         callback(null, uniqueCuisines);
       }
     });
@@ -152,14 +178,14 @@ class DBHelper {
   /**
    * Map marker for a restaurant.
    */
-   static mapMarkerForRestaurant(restaurant, map) {
+  static mapMarkerForRestaurant(restaurant) {
     // https://leafletjs.com/reference-1.3.0.html#marker  
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
       {title: restaurant.name,
-      alt: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant)
-      })
-      marker.addTo(newMap);
+        alt: restaurant.name,
+        url: DBHelper.urlForRestaurant(restaurant)
+      });
+    marker.addTo(newMap);
     return marker;
   } 
   /* static mapMarkerForRestaurant(restaurant, map) {

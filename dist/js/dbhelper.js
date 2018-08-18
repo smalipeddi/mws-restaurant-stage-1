@@ -11,48 +11,100 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 //import idb from 'idb';
+
 var DBHelper = function () {
   function DBHelper() {
     _classCallCheck(this, DBHelper);
   }
 
   _createClass(DBHelper, null, [{
-    key: "fetchRestaurants",
+    key: "openDatabase",
 
 
     /**
-     * Fetch all restaurants from server and store in database .
-     */
+    * Open Databases.
+    */
+    value: function openDatabase() {
+
+      var dbPromise = idb.open("restaurants", 1, function (upgradeDb) {
+        console.log("making a new object store");
+        if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
+          upgradeDb.createObjectStore("restaurantsList", { keyPath: "id" });
+        }
+      });
+      return dbPromise;
+    }
+
+    /**
+    * Fetch all restaurants
+    */
+
+  }, {
+    key: "fetchRestaurants",
     value: function fetchRestaurants(callback) {
+      //Initially Fetch from DataBase if data is present 
+      return DBHelper.cacheDataFromDb().then(function (restaurants) {
+        if (restaurants.length) {
+          callback(null, restaurants);
+        } else {
+          //Fetch from Server and save to database
+          var url = DBHelper.DATABASE_URL;
 
-      fetch(DBHelper.DATABASE_URL).then(function (resp) {
-        return resp.json();
-      }).then(function (data) {
-
-        /* Open database  and create object store  */
-        var dbPromise = idb.open("restaurantDb", 1, function (upgradeDb) {
-          if (!upgradeDb.objectStoreNames.contains("restaurants")) {
-            upgradeDb.createObjectStore("restaurants", { keyPath: "id" });
-          }
-        });
-
-        /* Store data in database */
-        dbPromise.then(function (db) {
-          if (!db) return;
-          var tx = db.transaction("restaurantDb", "readwrite");
-          var store = tx.objectStore("restaurantDb");
-
-          /* iterate through data and store in db */
-
-          data.forEach(function (restaurant) {
-            store.put(restaurant);
+          fetch(url, { method: "GET" }).then(function (resp) {
+            return resp.json();
+          }).then(function (restaurants) {
+            DBHelper.saveToDatabase(restaurants); //save to database
+            callback(null, restaurants);
+          }).catch(function (error) {
+            callback(error, null);
           });
-          return tx.complete;
+        }
+      });
+    }
+
+    /**
+    * Cache Restaurants from Database
+    */
+
+  }, {
+    key: "cacheDataFromDb",
+    value: function cacheDataFromDb() {
+      var dbPromise = idb.open("restaurants", 1, function (upgradeDb) {
+        console.log("making a new object store");
+        if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
+          upgradeDb.createObjectStore("restaurantsList", { keyPath: "id" });
+        }
+      });
+
+      var restaurants = dbPromise.then(function (db) {
+        var tx = db.transaction("restaurantsList", "readonly");
+        var store = tx.objectStore("restaurantsList");
+        return store.getAll();
+      });
+
+      return restaurants;
+    }
+
+    /**
+     * Save Restaurants to Database
+     */
+
+  }, {
+    key: "saveToDatabase",
+    value: function saveToDatabase(restaurants) {
+      var dbPromise = DBHelper.openDatabase();
+
+      /* Store data in database */
+      dbPromise.then(function (db) {
+        if (!db) return;
+        var tx = db.transaction("restaurantsList", "readwrite");
+        var store = tx.objectStore("restaurantsList");
+
+        /* iterate through data and store in db */
+        restaurants.forEach(function (res) {
+          store.put(res);
         });
-        // return store.getAll();
-        callback(null, data);
-      }).catch(function (error) {
-        callback("Request Falied " + error, null);
+        return tx.complete;
       });
     }
 
@@ -71,6 +123,7 @@ var DBHelper = function () {
           var restaurant = restaurants.find(function (r) {
             return r.id == id;
           });
+
           if (restaurant) {
             // Got the restaurant
             callback(null, restaurant);
@@ -91,6 +144,7 @@ var DBHelper = function () {
     value: function fetchRestaurantByCuisine(cuisine, callback) {
       // Fetch all restaurants  with proper error handling
       DBHelper.fetchRestaurants(function (error, restaurants) {
+        console.log(restautants);
         if (error) {
           callback(error, null);
         } else {
@@ -255,9 +309,8 @@ var DBHelper = function () {
 
 
     /**
-     * Database URL.
-     * Change this to restaurants.json file location on your server.
-     */
+    * Database URL.
+    */
     get: function get() {
       var port = 1337; // Changed this to your server port
       return "http://localhost:" + port + "/restaurants";

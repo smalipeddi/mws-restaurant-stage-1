@@ -1,5 +1,6 @@
-
+importScripts('/js/idb.js');
 var CACHE_NAME = 'mws-restaurant-stage-1-cache';
+
 var urlsToCache = [
   '/',
   './index.html',
@@ -7,6 +8,7 @@ var urlsToCache = [
   './css/styles.css',
   './js/dbhelper.js',
   './js/main.js',
+  './js/idb.js',
   './js/restaurant_info.js',
   './img/1.jpg',
   './img/2.jpg',
@@ -18,7 +20,8 @@ var urlsToCache = [
   './img/8.jpg',
   './img/9.jpg',
   './img/10.jpg',
-  './data/restaurants.json'
+  './app.js'
+  
 ];
 
 self.addEventListener('install', (event) => {
@@ -36,10 +39,19 @@ self.addEventListener('activate', event => {
   event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request).then(response => {
-    	    return response || fetch(event.request);
-        })
-    );
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request).then(function(resp) {
+      return resp || fetch(event.request).then(function(response) {
+        let responseClone = response.clone(); //clone network data for offline use 
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(event.request, responseClone);
+        });
+
+        return response;
+      });
+    }).catch(error => {
+         console.log("Unable to retrive from cache , $error");
+
+    }));
 });

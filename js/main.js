@@ -1,6 +1,6 @@
 /*eslint no-unused-vars: ["error", { "vars": "local" }]*/
 
-let restaurants,resetRestaurants,addMarkersToMap,createRestaurantHTML,neighborhoods,updateRestaurants,updateRestaurant,event,initMap,fetchNeighborhoods,fillNeighborhoodsHTML,fetchCuisines,fillCuisinesHTML,fillRestaurantsHTML,cuisines,newMap,markers = [];
+let Restaurants,addMarkersToMap,createRestaurantHTML,neighborhoods,updateRestaurants,updateRestaurant,event,initMap,fetchNeighborhoods,fillNeighborhoodsHTML,fetchCuisines,fillCuisinesHTML,fillRestaurantsHTML,cuisines,newMap,markers = [];
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.

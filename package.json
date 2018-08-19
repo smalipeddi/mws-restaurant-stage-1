@@ -30,7 +30,7 @@
     "gulp-babel": "^7.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-eslint": "^5.0.0",
-    "gulp-jasmine-phantom": "^3.0.0",
+    "gulp-jasmine-phantom": "^3.0.0"
     "gulp-lint": "0.0.1",
     "gulp-phantom-jasmine": "^2.1.0",
     "gulp-sourcemaps": "^2.6.4",

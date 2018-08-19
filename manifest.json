@@ -1,0 +1,32 @@
+{
+  "lang": "en",
+  "dir": "mws-restaurant-stage-1-master",
+  "name": "Restaurant Reviews",
+  "description": "Restaurant Reviews",
+  "short_name": "Restaurant Reviews",
+  "orientation": "any",
+  "icons": [
+  {
+    "src": "./images/1-192.png",
+    "type": "image/png",
+    "sizes": "192x192"
+  },
+  {
+    "src": "./images/1-512.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }
+],
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  
+  "serviceworker": {
+    "src": "service-worker.js",
+    "scope": "/",
+    "update_via_cache": "yes"
+  },
+  "background_color" : "#f3f3f3",
+  "theme_color": "#317EFB"
+ 
+}

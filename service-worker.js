@@ -39,19 +39,43 @@ self.addEventListener('activate', event => {
   event.waitUntil(clients.claim());
 });
 
+// self.addEventListener('fetch', function(event) {
+//   event.respondWith(
+//     caches.match(event.request).then(function(resp) {
+//       return resp || fetch(event.request).then(function(response) {
+//         let responseClone = response.clone(); //clone network data for offline use 
+//         caches.open(CACHE_NAME).then(function(cache) {
+//           cache.put(event.request, responseClone);
+//         });
+
+//         return response;
+//       });
+//     }).catch(error => {
+//          console.log("Unable to retrive from cache , $error");
+
+//     }));
+// });
+
+
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request).then(function(resp) {
-      return resp || fetch(event.request).then(function(response) {
-        let responseClone = response.clone(); //clone network data for offline use 
-        caches.open(CACHE_NAME).then(function(cache) {
-          cache.put(event.request, responseClone);
-        });
-
-        return response;
-      });
+      return resp || fetch(event.request);
     }).catch(error => {
          console.log("Unable to retrive from cache , $error");
 
     }));
 });
+self.addEventListener('fetch', function(event) {
+  event.respondWith(event.request).then(function (resp) {
+    alert(names);
+    caches.keys().then(function(names) {
+    for (let name of names)
+        caches.delete(name);
+
+});
+    // body...
+  })
+  // body...
+})
+

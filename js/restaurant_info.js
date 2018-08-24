@@ -96,13 +96,13 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   /* Add alt to images */
   image.alt = restaurant.name;
-  var restaurant_photograph = restaurant.photograph;
+  var restaurant_photograph = restaurant.id;
 
   /**
   * Add srcset and sizes attributes for images
   */
-  var small_images = (restaurant_photograph.split(".")[0]).concat("_300.jpg");
-  var large_images = (restaurant_photograph.split(".")[0]).concat("_600.jpg");
+  var small_images = (restaurant_photograph) + ("_300.jpg");
+  var large_images = (restaurant_photograph) + ("_600.jpg");
   image.srcset = "banners/" + large_images + " 600w" + "," +  "banners/" + small_images +  " 300w";
 
   image.src = "banners/"+ large_images;
@@ -116,7 +116,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+ 
+  DBHelper.fetchReviewsByRestaurantId(restaurant.id,  fillReviewsHTML);
+
 };
 
 /**
@@ -142,7 +144,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (error ,reviews) => {
+  self.restaurant.reviews = reviews;
   const container = document.getElementById("reviews-container");
   const title = document.createElement("h2");
   title.innerHTML = "Reviews";
@@ -172,7 +175,9 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement("p");
-  date.innerHTML = review.date;
+  var convertedDate = (new Date(review.createdAt)).toLocaleString();
+
+  date.innerHTML = convertedDate;
   li.appendChild(date);
 
   const rating = document.createElement("p");

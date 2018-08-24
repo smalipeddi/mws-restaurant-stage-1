@@ -13,38 +13,68 @@ class DBHelper {
   */
   static get DATABASE_URL() {
     const port = 1337; // Changed this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}/`;
   }
 
   /**
   * Open Databases.
   */
-  static openDatabase(){
+ static openDatabase(){
+   var reviewsList;
+   var dbPromise = idb.open("restaurants", 2, function(upgradeDb) {
+     switch(upgradeDb.oldVersion){
+       case 0 :
+         if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
+           upgradeDb.createObjectStore("restaurantsList" , {keyPath: "id"});
+         }
+       case 1 :
+         if (!upgradeDb.objectStoreNames.contains("reviewsList")) {
+           const reviewsStore = upgradeDb.createObjectStore("reviewsList" , {keyPath: "id"});
+           reviewsStore.createIndex('restaurant_id' ,'restaurant_id');
+         }
 
-    var dbPromise = idb.open("restaurants", 1, function(upgradeDb) {
-      console.log("making a new object store");
-      if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
-        upgradeDb.createObjectStore("restaurantsList" , {keyPath: "id"});
-      }
-    });
-    return dbPromise;
-  }
+     }
 
+   });
+   return dbPromise;
+ }
   /**
   * Fetch all restaurants
   */
   static fetchRestaurants(callback) {
     //Initially Fetch from DataBase if data is present 
-    return DBHelper.cacheDataFromDb().then(restaurants => {
+    return DBHelper.cacheRestaurantsDataFromDb().then(restaurants => {
       if(restaurants.length){
         callback(null, restaurants);
       }else{
         //Fetch from Server and save to database
-        var url = DBHelper.DATABASE_URL;
+        var url = DBHelper.DATABASE_URL + 'restaurants';
     
         fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(restaurants => {
-          DBHelper.saveToDatabase(restaurants); //save to database
+          DBHelper.saveRestaurantsToDatabase(restaurants); //save to database
           callback(null, restaurants);
+        }).catch(error => {
+          callback(error, null);
+        });
+      }
+    });
+  }
+
+  /**
+  * Fetch all reviews by restaurant id
+  */
+  static fetchReviewsByRestaurantId(id ,callback) {
+    //Initially Fetch from DataBase if data is present 
+    return DBHelper.cacheReviewsDataFromDb().then(reviews => {
+      if(reviews.length){
+        callback(null, reviews);
+      }else{
+        //Fetch from Server and save to database
+        var url = DBHelper.DATABASE_URL + "reviews/?restaurant_id=" + id;
+    
+        fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(reviews => {
+          DBHelper.saveReviewsToDatabase(reviews); //save to database
+          callback(null, reviews);
         }).catch(error => {
           callback(error, null);
         });
@@ -55,9 +85,9 @@ class DBHelper {
   /**
   * Cache Restaurants from Database
   */
-  static cacheDataFromDb(){
-    var dbPromise = idb.open("restaurants", 1, function(upgradeDb) {
-      console.log("making a new object store");
+  static cacheRestaurantsDataFromDb(){
+    var dbPromise = idb.open("restaurants", 2, function(upgradeDb) {
+      console.log("making a new restaurants object store");
       if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
         upgradeDb.createObjectStore("restaurantsList" , {keyPath: "id"});
       }
@@ -72,11 +102,34 @@ class DBHelper {
     return restaurants;
   }
 
+  /**
+  * Cache Reviews from Database
+  */
+  static cacheReviewsDataFromDb(){
+    var dbPromise = idb.open("restaurants", 2, function(upgradeDb) {
+      console.log("making a new reviews object store");
+      if (!upgradeDb.objectStoreNames.contains("reviewsList")) {
+        const reviewStore = upgradeDb.createObjectStore("reviewsList" , {keyPath: "id"});
+        reviewsStore.createIndex('restaurant_id','restaurant_id');
+      }
+    });
+
+    var reviews = dbPromise.then(function (db) {
+      var tx = db.transaction("reviewsList", "readonly");
+      var store = tx.objectStore("reviewsList");
+      return store.getAll();
+    });
+
+    return reviews;
+  }
+
+  
+
 
   /**
    * Save Restaurants to Database
    */
-  static saveToDatabase(restaurants){
+  static saveRestaurantsToDatabase(restaurants){
     var dbPromise = DBHelper.openDatabase();
 
     /* Store data in database */
@@ -92,6 +145,54 @@ class DBHelper {
       return tx.complete;
     });
   }
+
+
+  
+   /**
+   * Save Restaurants to Database
+   */
+  static saveReviewsToDatabase(reviews){
+    var dbPromise = DBHelper.openDatabase();
+
+    /* Store data in database */
+    dbPromise.then(db => {
+      if(!db) return ;
+      const tx = db.transaction("reviewsList", "readwrite");
+      let store = tx.objectStore("reviewsList");
+          
+      /* iterate through data and store in db */
+      reviews.forEach(res => {
+        store.put(res);
+      });
+      return tx.complete;
+    });
+  }
+
+   /**
+   * Toggle restaurant favourite
+   */
+  static saveRestaurantFavoriteToDatabase(isFavorite , restaurantId){
+   
+    fetch(`http://localhost:1337/restaurants/${restaurantId}/?is_favorite=${isFavorite}`, {
+        method: 'PUT'
+    })
+    .then(function(){
+      var dbPromise = DBHelper.openDatabase();
+      /* Store data in database */
+      dbPromise.then(db => {
+        if(!db) return ;
+        const tx = db.transaction("restaurantsList", "readwrite");
+        let store = tx.objectStore("restaurantsList");
+        store.get(restaurantId).then(function(restaurantById){
+          restaurantById.is_favorite = isFavorite;
+          store.put(restaurantById);
+        });   
+     
+      });
+
+    })
+  }
+
 
   /**
    * Fetch a restaurant by its ID.
@@ -119,7 +220,7 @@ class DBHelper {
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
     DBHelper.fetchRestaurants((error, restaurants) => {
-      console.log(restautants);
+      
       if (error) {
         callback(error, null);
       } else {

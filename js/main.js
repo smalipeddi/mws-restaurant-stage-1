@@ -184,6 +184,42 @@ createRestaurantHTML = (restaurant) => {
   name.innerHTML = restaurant.name;
   div.append(name);
 
+  const fav = document.createElement("img");
+  if(restaurant.is_favorite === "true"){
+    fav.src ="icons/like.svg";
+    fav.alt ="add to favorite";
+  }else{
+    fav.src ="icons/unlike.svg";
+    fav.alt ="remove from favorite";
+  }
+
+  const anchor = document.createElement("a");
+  anchor.onclick = function(){
+    if(restaurant.is_favorite === "true"){
+       fav.src = "icons/unlike.svg"
+       fav.alt = "remove from favorite";
+       if(restaurant.hasOwnProperty('is_favorite')){
+          restaurant.is_favorite = "false";
+       }
+      
+       DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite , restaurant.id);
+    }
+    else{
+        fav.src = "icons/like.svg";
+        fav.alt ="add to favorite";
+        if(restaurant.hasOwnProperty('is_favorite')){
+          restaurant.is_favorite = "true";
+        }
+        // restaurant.is_favourite = "true";
+        DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite ,restaurant.id);
+    }
+    
+    this.append(fav);
+  }
+  anchor.append(fav);
+
+  div.append(anchor);
+ 
   const neighborhood = document.createElement("p");
   neighborhood.innerHTML = restaurant.neighborhood;
   div.append(neighborhood);

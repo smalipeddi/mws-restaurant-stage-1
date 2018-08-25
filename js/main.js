@@ -202,7 +202,7 @@ createRestaurantHTML = (restaurant) => {
           restaurant.is_favorite = "false";
        }
       
-       DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite , restaurant.id);
+      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite , restaurant.id);
     }
     else{
         fav.src = "icons/like.svg";
@@ -211,7 +211,7 @@ createRestaurantHTML = (restaurant) => {
           restaurant.is_favorite = "true";
         }
         // restaurant.is_favourite = "true";
-        DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite ,restaurant.id);
+      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite ,restaurant.id);
     }
     
     this.append(fav);

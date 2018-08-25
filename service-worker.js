@@ -66,16 +66,5 @@ self.addEventListener('fetch', function(event) {
 
     }));
 });
-self.addEventListener('fetch', function(event) {
-  event.respondWith(event.request).then(function (resp) {
-    alert(names);
-    caches.keys().then(function(names) {
-    for (let name of names)
-        caches.delete(name);
 
-});
-    // body...
-  })
-  // body...
-})
 

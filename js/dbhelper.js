@@ -86,12 +86,8 @@ class DBHelper {
   * Cache Restaurants from Database
   */
   static cacheRestaurantsDataFromDb(){
-    var dbPromise = idb.open("restaurants", 2, function(upgradeDb) {
-      console.log("making a new restaurants object store");
-      if (!upgradeDb.objectStoreNames.contains("restaurantsList")) {
-        upgradeDb.createObjectStore("restaurantsList" , {keyPath: "id"});
-      }
-    });
+
+    var dbPromise = DBHelper.openDatabase();
 
     var restaurants = dbPromise.then(function (db) {
       var tx = db.transaction("restaurantsList", "readonly");
@@ -106,14 +102,9 @@ class DBHelper {
   * Cache Reviews from Database
   */
   static cacheReviewsDataFromDb(){
-    var dbPromise = idb.open("restaurants", 2, function(upgradeDb) {
-      console.log("making a new reviews object store");
-      if (!upgradeDb.objectStoreNames.contains("reviewsList")) {
-        const reviewStore = upgradeDb.createObjectStore("reviewsList" , {keyPath: "id"});
-        reviewsStore.createIndex('restaurant_id','restaurant_id');
-      }
-    });
 
+    var dbPromise = DBHelper.openDatabase();
+    
     var reviews = dbPromise.then(function (db) {
       var tx = db.transaction("reviewsList", "readonly");
       var store = tx.objectStore("reviewsList");

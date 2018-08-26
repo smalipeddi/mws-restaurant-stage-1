@@ -491,6 +491,21 @@ main {
 
 }
 
+#new_review{
+  width :50%;
+  height :20%;
+  float :left;
+  border :2px solid black;
+  padding: 10px;
+  margin:10px;
+}
+
+.inside .new_review_fields {
+  margin :10px;
+  padding: 10px;
+  
+}
+
 /***************************************/
 /* MEDIA QUERIES FOR RESPONSIVE LAYOUT */
 /***************************************/

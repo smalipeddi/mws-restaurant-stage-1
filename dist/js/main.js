@@ -2,8 +2,7 @@
 
 /*eslint no-unused-vars: ["error", { "vars": "local" }]*/
 
-var restaurants = void 0,
-    resetRestaurants = void 0,
+var Restaurants = void 0,
     addMarkersToMap = void 0,
     createRestaurantHTML = void 0,
     neighborhoods = void 0,
@@ -108,18 +107,6 @@ initMap = function initMap() {
 
   updateRestaurants();
 };
-/* window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false
-  });
-  updateRestaurants();
-} */
 
 /**
  * Update page and map for current restaurants.
@@ -211,6 +198,41 @@ createRestaurantHTML = function createRestaurantHTML(restaurant) {
   name.innerHTML = restaurant.name;
   div.append(name);
 
+  var fav = document.createElement("img");
+  if (restaurant.is_favorite === "true") {
+    fav.src = "icons/like.svg";
+    fav.alt = "add to favorite";
+  } else {
+    fav.src = "icons/unlike.svg";
+    fav.alt = "remove from favorite";
+  }
+
+  var anchor = document.createElement("a");
+  anchor.onclick = function () {
+    if (restaurant.is_favorite === "true") {
+      fav.src = "icons/unlike.svg";
+      fav.alt = "remove from favorite";
+      if (restaurant.hasOwnProperty('is_favorite')) {
+        restaurant.is_favorite = "false";
+      }
+
+      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite, restaurant.id);
+    } else {
+      fav.src = "icons/like.svg";
+      fav.alt = "add to favorite";
+      if (restaurant.hasOwnProperty('is_favorite')) {
+        restaurant.is_favorite = "true";
+      }
+      // restaurant.is_favourite = "true";
+      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite, restaurant.id);
+    }
+
+    this.append(fav);
+  };
+  anchor.append(fav);
+
+  div.append(anchor);
+
   var neighborhood = document.createElement("p");
   neighborhood.innerHTML = restaurant.neighborhood;
   div.append(neighborhood);
@@ -247,19 +269,3 @@ addMarkersToMap = function addMarkersToMap() {
     self.markers.push(marker);
   });
 };
-
-// document.getElementById('view-details').on('click',function(){
-//     location.href=DBHelper.urlForRestaurant(restaurant);
-//   });
-
-
-/* addMarkersToMap = (restaurants = self.restaurants) => {
-  restaurants.forEach(restaurant => {
-    // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url
-    });
-    self.markers.push(marker);
-  });
-} */

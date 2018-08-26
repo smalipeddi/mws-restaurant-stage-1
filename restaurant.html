@@ -64,7 +64,39 @@
     <section id="map-container">
       <div id="map" tabindex="0" aria-label="Leaflet Maps for Restaurants"  role="application"></div>
     </section>
+    <label  tabindex="0" for="new_review">Add New Review</label>
+    
     <!-- End map -->
+    <section id="new_review" tabindex="0">
+      <form id="reviewForm" target="_blank">
+        <div id="restaurant_id">
+          <div class ="new_review_fields">
+            <label> Name : </label>
+            <input type="text" name="reviewer_name" id="reviewer_name">
+          </div>
+          <br>
+          <div class ="new_review_fields">
+            <label> Ratings : </label>
+            <select id="select_rating">
+              <option value = "1"> 1 </option>
+              <option value = "2"> 2 </option>
+              <option value = "3"> 3 </option>
+              <option value = "4"> 4 </option>
+              <option value = "5"> 5 </option>
+            </select>
+          </div>
+          <br>
+          <div class ="new_review_fields">
+            <label> Comment :</label> 
+            <textarea id="reviewer_comment"></textarea>
+          </div>
+          <div class ="new_review_fields">
+          <input type="button" style="float:right"  onclick="addReview()" value="Add Review" />
+          </div>
+          <br>
+        </div>
+    </form>
+    </section>
     <!-- Beginning reviews -->
    
     <section id="reviews-container" tabindex="0">

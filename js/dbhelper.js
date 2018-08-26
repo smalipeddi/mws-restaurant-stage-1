@@ -65,7 +65,7 @@ class DBHelper {
   */
   static fetchReviewsByRestaurantId(id ,callback) {
     //Initially Fetch from DataBase if data is present 
-    return DBHelper.cacheReviewsDataFromDb().then(reviews => {
+    return DBHelper.cacheReviewsDataFromDb(id).then(reviews => {
       if(reviews.length){
         callback(null, reviews);
       }else{
@@ -101,21 +101,18 @@ class DBHelper {
   /**
   * Cache Reviews from Database
   */
-  static cacheReviewsDataFromDb(){
+  static cacheReviewsDataFromDb(id){
 
     var dbPromise = DBHelper.openDatabase();
-    
+
     var reviews = dbPromise.then(function (db) {
       var tx = db.transaction("reviewsList", "readonly");
       var store = tx.objectStore("reviewsList");
-      return store.getAll();
+      return store.getAll(id);
     });
 
     return reviews;
   }
-
-  
-
 
   /**
    * Save Restaurants to Database
@@ -151,11 +148,19 @@ class DBHelper {
       const tx = db.transaction("reviewsList", "readwrite");
       let store = tx.objectStore("reviewsList");
           
-      /* iterate through data and store in db */
-      reviews.forEach(res => {
-        store.put(res);
-      });
+      /* check if we are storing an object or an Array of objects */
+      if(reviews && typeof reviews === 'object' && reviews.constructor === Array){
+        reviews.forEach(res => {
+          store.put(res);
+        });
+      }
+      else
+      {
+        store.put(reviews);
+      }
+
       return tx.complete;
+    
     });
   }
 
@@ -183,6 +188,31 @@ class DBHelper {
 
     })
   }
+ 
+  /**
+   * Send reviews to the Server and save to Database.
+   */
+
+  static sendReviewToServer(reviewData) {
+   
+    console.log('Sending Reviews : ', reviewData);
+    var fetch_options = {
+      method: 'POST',
+      body: JSON.stringify(reviewData),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    };
+    fetch(`http://localhost:1337/reviews`, fetch_options).then((response) => {
+        return response.json();
+    })
+    .then((data) => {console.log(`Fetched reviews successfully`);
+      DBHelper.saveReviewsToDatabase(data);
+
+    })
+    .catch(error => console.log('error:', error));
+  }
+
 
 
   /**
@@ -322,16 +352,6 @@ class DBHelper {
     marker.addTo(newMap);
     return marker;
   } 
-  /* static mapMarkerForRestaurant(restaurant, map) {
-    const marker = new google.maps.Marker({
-      position: restaurant.latlng,
-      title: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant),
-      map: map,
-      animation: google.maps.Animation.DROP}
-    );
-    return marker;
-  } */
 
 }
 

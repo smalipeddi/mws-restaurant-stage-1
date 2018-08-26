@@ -50,22 +50,6 @@ initMap = function initMap() {
   });
 };
 
-/* window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      });
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-    }
-  });
-} */
-
 /**
  * Get current restaurant from page URL.
  */
@@ -87,6 +71,7 @@ fetchRestaurantFromURL = function fetchRestaurantFromURL(callback) {
         console.error(error);
         return;
       }
+
       fillRestaurantHTML();
       callback(null, restaurant);
     });
@@ -110,13 +95,13 @@ fillRestaurantHTML = function fillRestaurantHTML() {
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   /* Add alt to images */
   image.alt = restaurant.name;
-  var restaurant_photograph = restaurant.photograph;
+  var restaurant_photograph = restaurant.id;
 
   /**
   * Add srcset and sizes attributes for images
   */
-  var small_images = restaurant_photograph.split(".")[0].concat("_300.jpg");
-  var large_images = restaurant_photograph.split(".")[0].concat("_600.jpg");
+  var small_images = restaurant_photograph + "_300.jpg";
+  var large_images = restaurant_photograph + "_600.jpg";
   image.srcset = "banners/" + large_images + " 600w" + "," + "banners/" + small_images + " 300w";
 
   image.src = "banners/" + large_images;
@@ -129,8 +114,8 @@ fillRestaurantHTML = function fillRestaurantHTML() {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
+
+  DBHelper.fetchReviewsByRestaurantId(restaurant.id, fillReviewsHTML);
 };
 
 /**
@@ -158,9 +143,8 @@ fillRestaurantHoursHTML = function fillRestaurantHoursHTML() {
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = function fillReviewsHTML() {
-  var reviews = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : self.restaurant.reviews;
-
+fillReviewsHTML = function fillReviewsHTML(error, reviews) {
+  //self.restaurant.reviews = reviews;
   var container = document.getElementById("reviews-container");
   var title = document.createElement("h2");
   title.innerHTML = "Reviews";
@@ -190,7 +174,9 @@ createReviewHTML = function createReviewHTML(review) {
   li.appendChild(name);
 
   var date = document.createElement("p");
-  date.innerHTML = review.date;
+  var convertedDate = new Date(review.createdAt).toLocaleString();
+
+  date.innerHTML = convertedDate;
   li.appendChild(date);
 
   var rating = document.createElement("p");
@@ -202,6 +188,33 @@ createReviewHTML = function createReviewHTML(review) {
   li.appendChild(comments);
 
   return li;
+};
+
+addReview = function addReview() {
+
+  console.log("clicked submit");
+
+  var url = window.location.href;
+  var id = parseInt(url.substring(url.lastIndexOf("=") + 1));
+
+  var name = document.getElementById('reviewer_name').value;
+  var rating = document.getElementById('select_rating');
+  var rating_value = rating.options[rating.selectedIndex].value;
+  var comment = document.getElementById('reviewer_comment').value;
+
+  var jsonToSend = {
+    "restaurant_id": id,
+    "name": name,
+    "createdAt": new Date(),
+    "rating": rating_value,
+    "comments": comment
+  };
+
+  DBHelper.sendReviewToServer(jsonToSend);
+  var container = document.getElementById("reviews-container");
+  var ul = document.getElementById("reviews-list");
+  ul.insertBefore(createReviewHTML(jsonToSend), ul.childNodes[0]);
+  container.appendChild(ul);
 };
 
 /**

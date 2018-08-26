@@ -40,22 +40,6 @@ initMap = () => {
   });
 };
 
-/* window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      });
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
-    }
-  });
-} */
-
 /**
  * Get current restaurant from page URL.
  */
@@ -75,6 +59,7 @@ fetchRestaurantFromURL = (callback) => {
         console.error(error);
         return;
       }
+
       fillRestaurantHTML();
       callback(null, restaurant);
     });
@@ -115,8 +100,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
- 
+
   DBHelper.fetchReviewsByRestaurantId(restaurant.id,  fillReviewsHTML);
 
 };
@@ -145,7 +129,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (error ,reviews) => {
-  self.restaurant.reviews = reviews;
+  //self.restaurant.reviews = reviews;
   const container = document.getElementById("reviews-container");
   const title = document.createElement("h2");
   title.innerHTML = "Reviews";
@@ -190,6 +174,34 @@ createReviewHTML = (review) => {
 
   return li;
 };
+
+addReview = () => {
+
+  console.log("clicked submit");
+  
+  var url = window.location.href;
+  var id = parseInt(url.substring(url.lastIndexOf("=") + 1));
+  
+  var name = document.getElementById('reviewer_name').value;
+  var rating = document.getElementById('select_rating');
+  var rating_value = rating.options[rating.selectedIndex].value;
+  var comment = document.getElementById('reviewer_comment').value;
+  
+  var jsonToSend = {
+    "restaurant_id": id,
+    "name": name,
+    "createdAt": new Date(),
+    "rating": rating_value,
+    "comments":comment
+  }
+
+  DBHelper.sendReviewToServer(jsonToSend);
+  const container = document.getElementById("reviews-container");
+  const ul = document.getElementById("reviews-list");
+  ul.insertBefore(createReviewHTML(jsonToSend), ul.childNodes[0]);
+  container.appendChild(ul);
+
+}
 
 /**
  * Add restaurant name to the breadcrumb navigation menu

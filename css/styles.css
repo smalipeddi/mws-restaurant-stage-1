@@ -438,13 +438,34 @@ main {
 .inside #map-container {
   -webkit-box-ordinal-group: 3;
       -ms-flex-order: 2;
-          order: 2; }
+          }
 
 .inside #reviews-container {
   -webkit-box-ordinal-group: 7;
       -ms-flex-order: 6;
           order: 6;
   width: 100%; }
+
+ .inside #new_review {
+  width :50%;
+  height :20%;
+  float :left;
+  border :2px solid black;
+  padding: 10px;
+  margin:10px;
+}
+
+.inside #restaurant_id {
+ margin: 10px;
+ padding:10px;
+}
+
+.inside #reviewer_name {
+  margin :10px;
+  padding: 10px;
+  
+
+}
 
 /***************************************/
 /* MEDIA QUERIES FOR RESPONSIVE LAYOUT */

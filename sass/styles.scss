@@ -492,7 +492,7 @@ main {
 }
 
 #new_review{
-  width :50%;
+  width :70%;
   height :20%;
   float :left;
   border :2px solid black;
@@ -516,6 +516,10 @@ main {
  
   .filter-options h2 {
     width: 100px;
+  }
+   .inside #new_review {
+    margin-left: 0px;
+    width: 90%;
   }
 
   

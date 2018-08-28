@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">>
 
 <head>
   <!-- Responsive Meta Tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale<=5.0, user-scalable=yes">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
   <!-- Encoding -->
   <meta charset="utf-8">
   <link rel="manifest" href="manifest.json" />
@@ -64,7 +65,40 @@
     <section id="map-container">
       <div id="map" tabindex="0" aria-label="Leaflet Maps for Restaurants"  role="application"></div>
     </section>
+    
     <!-- End map -->
+    <section id="new_review" tabindex="0">
+      <label  tabindex="0" for="new_review">Add New Review</label>
+    
+      <form id="reviewForm" name="reviewerForm" target="_blank">
+        <div id="restaurant_id">
+          <div class ="new_review_fields">
+            <label for="reviewer_name"> Name : </label>
+            <input type="text" name="reviewer_name"  id="reviewer_name">
+          </div>
+          <br>
+          <div class ="new_review_fields">
+            <label> Ratings : </label>
+            <select id="select_rating">
+              <option value = "1"> 1 </option>
+              <option value = "2"> 2 </option>
+              <option value = "3"> 3 </option>
+              <option value = "4"> 4 </option>
+              <option value = "5"> 5 </option>
+            </select>
+          </div>
+          <br>
+          <div class ="new_review_fields">
+            <label> Comment :</label> 
+            <textarea id="reviewer_comment" name="reviewer_comment" value="reviewer_comment"></textarea>
+          </div>
+          <div class ="new_review_fields">
+          <button type="button" style="float:right"  onclick="addReview()" value="Add Review" >  Add Review </button>
+          </div>
+          <br>
+        </div>
+    </form>
+    </section>
     <!-- Beginning reviews -->
    
     <section id="reviews-container" tabindex="0">

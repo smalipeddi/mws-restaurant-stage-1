@@ -76,13 +76,6 @@ gulp.task("lint", () => {
     .pipe(eslint.failOnError());
 });
 
-// gulp.task('default', gulp.series(['styles' ,'lint']), function(cb){
-// 	gulp.watch('sass/**/*.scss',['styles']);
-//     gulp.watch('js/**/*.js',['lint']);
-//     gulp.watch('build/index.html').on('change' ,browserSync.reload);
-    
-// 	cb();
-// });
 
 gulp.task("copy-html", () => {
   gulp.src("./index.html")
@@ -114,38 +107,3 @@ gulp.task("serve", ["styles"], function(cb) {
 
 gulp.task('dist' ,['copy-html' ,'copy-images' ,'lint' ,'styles' ,'scripts-dist']);
 
-
-
-//var 'browser-sync' = require('browser-sync');
-// function defaultTask(cb) {
-//   // place code for your default task here
-//   cb();
-//   console.log("hello gulp");
-// }
-
-//exports.default = defaultTask
-
-
-// // process JS files and return the stream.
-// gulp.task('js', function () {
-//     return gulp.src('js/*js')
-//         .pipe(uglify())
-//         .pipe(gulp.dest('dist/js'));
-// });
-
-// // create a task that ensures the `js` task is complete before
-// // reloading browsers
-// gulp.task('js-watch', ['js'], function (done) {
-//     browserSync.reload();
-//     done();
-// });
-
-
-// // or...
-
-// gulp.task('browser-sync', function() {
-//     browserSync.init({
-//         proxy: "yourlocal.dev"
-//     });
-//     cb();
-// });

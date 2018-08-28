@@ -49,4 +49,8 @@ self.addEventListener('fetch', function(event) {
     }));
 });
 
+self.addEventListener('message', function(event) {
+    alert(event.data.alert);
+});
+
 

@@ -89,7 +89,7 @@ var DBHelper = function () {
           fetch(url, { method: "GET" }).then(function (resp) {
             return resp.json();
           }).then(function (reviews) {
-            DBHelper.saveReviewsToDatabase(reviews); //save to database
+            //  DBHelper.saveReviewsToDatabase(reviews); //save to database
             callback(null, reviews);
           }).catch(function (error) {
             callback(error, null);
@@ -236,6 +236,20 @@ var DBHelper = function () {
       }).catch(function (error) {
         return console.log('error:', error);
       });
+    }
+  }, {
+    key: "saveReviewsTolocalStorage",
+    value: function saveReviewsTolocalStorage(offlineReviewsList) {
+      window.localStorage.setItem("reviews", JSON.stringify(offlineReviewsList));
+    }
+  }, {
+    key: "getReviewsFromlocalStorage",
+    value: function getReviewsFromlocalStorage() {
+      var offlineReviewsList = [];
+      if (window.localStorage.getItem("reviews") !== null) {
+        offlineReviewsList = window.localStorage.getItem("reviews");
+      }
+      return offlineReviewsList;
     }
 
     /**

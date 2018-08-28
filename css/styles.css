@@ -305,6 +305,8 @@ button {
 .dropdown-area {
   float: right; }
 
+  .inside  input[type=button]
+
 /********************************/
 /* FLEX LAYOUT FOR MAIN PAGE    */
 /********************************/
@@ -447,12 +449,14 @@ main {
   width: 100%; }
 
  .inside #new_review {
-  width :50%;
+  width :70%;
   height :20%;
   float :left;
   border :2px solid black;
   padding: 10px;
-  margin:10px;
+  /*margin-left: -400px;*/
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .inside #restaurant_id {
@@ -463,9 +467,54 @@ main {
 .inside #reviewer_name {
   margin :10px;
   padding: 10px;
+  width:50%;
   
-
 }
+
+.inside #select_rating{
+  background-color: white;
+  border: 1px solid #fff;
+  font-family: Arial,sans-serif;
+  font-size: 11pt;
+  height: 35px;
+  letter-spacing: 0;
+  margin: 10px;
+  padding: 0 10px;
+  width: 200px;
+  
+}
+
+.inside #new_review label{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12pt;
+  color: #333;
+}
+
+.inside .new_review_fields button[type=button]{
+  background-color: #9E5400;
+  border-bottom: 3px solid #eee;
+  color: #fff;
+  display: inline-block;
+  font-size: 10pt;
+  margin: 15px 0 0;
+  padding: 8px 30px 10px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.inside .new_review_fields{
+  vertical-align: middle;
+}
+
+textarea#reviewer_comment {
+    width: 80%;
+    height: 30%;
+    vertical-align: middle;
+}
+
+
 
 /***************************************/
 /* MEDIA QUERIES FOR RESPONSIVE LAYOUT */
@@ -473,7 +522,13 @@ main {
 /* Small devices (portrait tablets and large phones, 600px and up) to Medium devices (landscape tablets, to 768px )*/
 @media only screen and (min-width: 600px) and (max-width: 768px) {
   .filter-options h2 {
-    width: 100px; } }
+    width: 100px;
+  }
+  .inside #new_review {
+    margin-left: 0px;
+    width: 90%;
+  }
+}
 
 /* Medium devices (landscape tablets, 768px and up) to Extra large devices (large laptops and desktops, to 1200px )*/
 @media only screen and (min-width: 769px) and (max-width: 1200px) {

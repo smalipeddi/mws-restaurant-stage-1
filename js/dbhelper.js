@@ -73,7 +73,7 @@ class DBHelper {
         var url = DBHelper.DATABASE_URL + "reviews/?restaurant_id=" + id;
     
         fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(reviews => {
-          DBHelper.saveReviewsToDatabase(reviews); //save to database
+        //  DBHelper.saveReviewsToDatabase(reviews); //save to database
           callback(null, reviews);
         }).catch(error => {
           callback(error, null);
@@ -212,6 +212,20 @@ class DBHelper {
     })
     .catch(error => console.log('error:', error));
   }
+
+ static saveReviewsTolocalStorage(offlineReviewsList){
+    window.localStorage.setItem("reviews" , JSON.stringify(offlineReviewsList));
+
+ }
+
+static getReviewsFromlocalStorage(){
+    var offlineReviewsList = [];
+    if(window.localStorage.getItem("reviews") !== null){
+      offlineReviewsList = window.localStorage.getItem("reviews");
+    }
+    return offlineReviewsList;
+
+ }
 
 
 

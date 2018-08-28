@@ -5,6 +5,8 @@
 
 let restaurant,initMap,fetchRestaurantFromURL,fillRestaurantHTML,getParameterByName,fillRestaurantHoursHTML,fillReviewsHTML,createReviewHTML,fillBreadcrumb,event;
 var newMap;
+var offlineReviews = [];
+var offlineReviewsFromLocalStorage = [];
 
 /**
  * Initialize map as soon as the page is loaded.
@@ -134,6 +136,14 @@ fillReviewsHTML = (error ,reviews) => {
   const title = document.createElement("h2");
   title.innerHTML = "Reviews";
   container.appendChild(title);
+  
+  //Get reviews from local storage if they are added  when offline
+  var offlineReviewsFromLocalStorage = DBHelper.getReviewsFromlocalStorage();
+  
+  if(offlineReviewsFromLocalStorage !== undefined && offlineReviewsFromLocalStorage.length !== 0){
+    var array1 = JSON.parse(offlineReviewsFromLocalStorage);
+    var reviews = reviews.concat(array1);
+  }
 
   if (!reviews) {
     const noReviews = document.createElement("p");
@@ -144,6 +154,7 @@ fillReviewsHTML = (error ,reviews) => {
   const ul = document.getElementById("reviews-list");
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
+
   });
   container.appendChild(ul);
 };
@@ -180,27 +191,52 @@ addReview = () => {
   console.log("clicked submit");
   
   var url = window.location.href;
-  var id = parseInt(url.substring(url.lastIndexOf("=") + 1));
+  var id = parseInt(getParameterByName('id'));
   
   var name = document.getElementById('reviewer_name').value;
   var rating = document.getElementById('select_rating');
   var rating_value = rating.options[rating.selectedIndex].value;
   var comment = document.getElementById('reviewer_comment').value;
-  
-  var jsonToSend = {
-    "restaurant_id": id,
-    "name": name,
-    "createdAt": new Date(),
-    "rating": rating_value,
-    "comments":comment
+   
+  if (name == "") {
+      alert("Name must be filled out");
+      return false;
+  }else if(comment == ""){
+      alert("Comment must be filled out");
+      return false;
   }
+  else {
+     var jsonToSend = {
+      "restaurant_id": id,
+      "name": name,
+      "createdAt": new Date(),
+      "rating": rating_value,
+      "comments":comment
+    }
+    if(window.navigator.onLine){
+      DBHelper.sendReviewToServer(jsonToSend);
 
-  DBHelper.sendReviewToServer(jsonToSend);
-  const container = document.getElementById("reviews-container");
-  const ul = document.getElementById("reviews-list");
-  ul.insertBefore(createReviewHTML(jsonToSend), ul.childNodes[0]);
-  container.appendChild(ul);
+    }
+    else 
+    {
+      // Get the existing data
+      var existing = localStorage.getItem('reviews');
+      existing = existing ? JSON.parse(existing) : [];
+      existing.push(jsonToSend);
+      localStorage.setItem('reviews', JSON.stringify(existing));
+    }
 
+    const container = document.getElementById("reviews-container");
+    const ul = document.getElementById("reviews-list");
+    ul.insertBefore(createReviewHTML(jsonToSend), ul.childNodes[0]);
+    container.appendChild(ul);
+
+     var reviewForm = document.getElementById('reviewForm');
+    reviewForm.reset();
+
+  }
+  return false;
+ 
 }
 
 /**

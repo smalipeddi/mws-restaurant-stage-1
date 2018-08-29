@@ -157,8 +157,8 @@ createRestaurantHTML = (restaurant) => {
   /**
   * Add srcset for images based on Device Pixel Ratio
   */
-  var small_images = (restaurant_photograph) + "-1x.jpg";
-  var large_images = (restaurant_photograph) + "-2x.jpg";
+  var small_images = (restaurant_photograph) + "-1x.webp";
+  var large_images = (restaurant_photograph) + "-2x.webp";
   image.srcset = "images/" + small_images + " 1x" + "," +  "images/" + large_images +  " 2x";
   
   image.src = "img/"+ restaurant_photograph;

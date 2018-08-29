@@ -20,7 +20,8 @@ var urlsToCache = [
   './img/8.jpg',
   './img/9.jpg',
   './img/10.jpg',
-  './app.js'
+  './app.js',
+  './manifest.json'
   
 ];
 

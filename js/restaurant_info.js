@@ -88,8 +88,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   /**
   * Add srcset and sizes attributes for images
   */
-  var small_images = (restaurant_photograph) + ("_300.jpg");
-  var large_images = (restaurant_photograph) + ("_600.jpg");
+  var small_images = (restaurant_photograph) + ("_300.webp");
+  var large_images = (restaurant_photograph) + ("_600.webp");
   image.srcset = "banners/" + large_images + " 600w" + "," +  "banners/" + small_images +  " 300w";
 
   image.src = "banners/"+ large_images;

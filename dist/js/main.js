@@ -148,7 +148,9 @@ createRestaurantHTML = (restaurant) => {
   li.tabIndex = 0;
   const image = document.createElement("img");
   image.className = "restaurant-img";
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.className = "lazyload";
+  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant) );
+  //image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   /* Add alt to images */
   image.alt = restaurant.name;
@@ -160,8 +162,8 @@ createRestaurantHTML = (restaurant) => {
   var small_images = (restaurant_photograph) + "-1x.webp";
   var large_images = (restaurant_photograph) + "-2x.webp";
   image.srcset = "images/" + small_images + " 1x" + "," +  "images/" + large_images +  " 2x";
-  
-  image.src = "img/"+ restaurant_photograph;
+  image.setAttribute('data-src' ,("img/"+ restaurant_photograph));
+ // image.src = "img/"+ restaurant_photograph;
   image.sizes = "(max-width: 325px) 100vw 50vw";
   li.append(image);
 
@@ -190,7 +192,7 @@ createRestaurantHTML = (restaurant) => {
           restaurant.is_favorite = "false";
        }
       
-      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite , restaurant.id);
+     // DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite , restaurant.id);
     }
     else{
         fav.src = "icons/like.svg";
@@ -199,8 +201,9 @@ createRestaurantHTML = (restaurant) => {
           restaurant.is_favorite = "true";
         }
         // restaurant.is_favourite = "true";
-      DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite ,restaurant.id);
-    }
+     }
+     DBHelper.saveRestaurantFavoriteToDatabase(restaurant.is_favorite ,restaurant.id);
+
     
     this.append(fav);
   }

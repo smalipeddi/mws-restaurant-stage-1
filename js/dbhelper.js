@@ -42,22 +42,41 @@ class DBHelper {
   * Fetch all restaurants
   */
   static fetchRestaurants(callback) {
-    //Initially Fetch from DataBase if data is present 
-    return DBHelper.cacheRestaurantsDataFromDb().then(restaurants => {
-      if(restaurants.length){
-        callback(null, restaurants);
-      }else{
-        //Fetch from Server and save to database
-        var url = DBHelper.DATABASE_URL + 'restaurants';
-    
-        fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(restaurants => {
-          DBHelper.saveRestaurantsToDatabase(restaurants); //save to database
+    if(navigator.onLine){
+    //Fetch from Server and save to database
+      var url = DBHelper.DATABASE_URL + 'restaurants';
+      fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(restaurants => {
+        var dbPromise = DBHelper.openDatabase();
+
+        /* Store data in database */
+        dbPromise.then(db => {
+          if(!db) return ;
+          const tx = db.transaction("restaurantsList", "readwrite");
+          let store = tx.objectStore("restaurantsList");
+              
+          /* iterate through data and store in db */
+          restaurants.forEach(res => {
+            store.put(res);
+          });
+          return tx.complete;
+        });
+
           callback(null, restaurants);
         }).catch(error => {
           callback(error, null);
         });
-      }
-    });
+
+    }else{
+      var dbPromise = DBHelper.openDatabase();
+      var restaurants = dbPromise.then(function (db) {
+        var tx = db.transaction("restaurantsList", "readonly");
+        var store = tx.objectStore("restaurantsList");
+        return store.getAll();
+      });
+      callback(null, restaurants);
+     
+    }
+    
   }
 
   /**
@@ -65,53 +84,29 @@ class DBHelper {
   */
   static fetchReviewsByRestaurantId(id ,callback) {
     //Initially Fetch from DataBase if data is present 
-    return DBHelper.cacheReviewsDataFromDb(id).then(reviews => {
-      if(reviews.length){
-        callback(null, reviews);
-      }else{
-        //Fetch from Server and save to database
+    if(navigator.onLine){
+       //Fetch from Server and save to database
         var url = DBHelper.DATABASE_URL + "reviews/?restaurant_id=" + id;
     
         fetch(url, {method: "GET"}).then(resp => {  return resp.json();}).then(reviews => {
-        //  DBHelper.saveReviewsToDatabase(reviews); //save to database
           callback(null, reviews);
         }).catch(error => {
           callback(error, null);
         });
-      }
-    });
-  }
 
-  /**
-  * Cache Restaurants from Database
-  */
-  static cacheRestaurantsDataFromDb(){
+    }else{
+      var dbPromise = DBHelper.openDatabase();
+      var reviews = dbPromise.then(function (db) {
+        var tx = db.transaction("reviewsList", "readonly");
+        var store = tx.objectStore("reviewsList");
+        return store.getAll(id);
+        if(reviews.length){
+          callback(null, reviews);
+        }
+      });
 
-    var dbPromise = DBHelper.openDatabase();
-
-    var restaurants = dbPromise.then(function (db) {
-      var tx = db.transaction("restaurantsList", "readonly");
-      var store = tx.objectStore("restaurantsList");
-      return store.getAll();
-    });
-
-    return restaurants;
-  }
-
-  /**
-  * Cache Reviews from Database
-  */
-  static cacheReviewsDataFromDb(id){
-
-    var dbPromise = DBHelper.openDatabase();
-
-    var reviews = dbPromise.then(function (db) {
-      var tx = db.transaction("reviewsList", "readonly");
-      var store = tx.objectStore("reviewsList");
-      return store.getAll(id);
-    });
-
-    return reviews;
+    }
+   
   }
 
   /**
@@ -133,8 +128,6 @@ class DBHelper {
       return tx.complete;
     });
   }
-
-
   
    /**
    * Save Restaurants to Database
@@ -213,39 +206,37 @@ class DBHelper {
     .catch(error => console.log('error:', error));
   }
 
- static saveReviewsTolocalStorage(offlineReviewsList){
+  static saveReviewsTolocalStorage(offlineReviewsList){
     window.localStorage.setItem("reviews" , JSON.stringify(offlineReviewsList));
 
- }
+  }
 
-static getReviewsFromlocalStorage(){
+  static getReviewsFromlocalStorage(){
     var offlineReviewsList = [];
     if(window.localStorage.getItem("reviews") !== null){
       offlineReviewsList = window.localStorage.getItem("reviews");
     }
     return offlineReviewsList;
 
- }
+  }
 
-
-
-  /**
+   /**
    * Fetch a restaurant by its ID.
    */
-  static fetchRestaurantById(id, callback) {
+   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
     DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        const restaurant = restaurants.find(r => r.id == id);
+       if (error) {
+         callback(error, null);
+        }else {
+          const restaurant = restaurants.find(r => r.id == id);
         
-        if (restaurant) { // Got the restaurant
-          callback(null, restaurant);
-        } else { // Restaurant does not exist in the database
-          callback("Restaurant does not exist", null);
+          if (restaurant) { // Got the restaurant
+            callback(null, restaurant);
+          } else { // Restaurant does not exist in the database
+            callback("Restaurant does not exist", null);
+          }
         }
-      }
     });
   }
 
@@ -350,7 +341,8 @@ static getReviewsFromlocalStorage(){
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    console.log(restaurant);
+    return (`/img/${restaurant.photograph}.jpg`);
   }
 
   /**

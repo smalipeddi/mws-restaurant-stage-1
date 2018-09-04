@@ -80,10 +80,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById("restaurant-img");
   image.className = "restaurant-img";
-  image.className = "lazyload";
-  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant));
-  
- // image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.imageUrlForRestaurant(restaurant);
   /* Add alt to images */
   image.alt = restaurant.name;
   var restaurant_photograph = restaurant.id;
@@ -94,9 +91,45 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   var small_images = (restaurant_photograph) + ("_300.webp");
   var large_images = (restaurant_photograph) + ("_600.webp");
   image.srcset = "banners/" + large_images + " 600w" + "," +  "banners/" + small_images +  " 300w";
-  image.setAttribute('data-src' , ("banners/"+ large_images));
- // image.src = "banners/"+ large_images;
+  image.src = "banners/"+ large_images;
   image.sizes = "(max-width: 325px) 100vw 50vw";
+
+ //LAZY LOADING OF RESTAURANT IMAGE
+ //const image = document.createElement('img');
+  const config = {
+    rootMargin: "0px",
+    threshold: .1
+    
+  };
+
+  let observer;
+  if ('IntersectionObserver' in window) {
+    observer = new IntersectionObserver(onIntersection, config);
+    observer.observe(image);
+
+  } else {
+    //loa dimages as they are
+    image.src = DBHelper.imageUrlForRestaurant(restaurant);
+    image.srcset = "banners/" + large_images + " 600w" + "," +  "banners/" + small_images +  " 300w";
+    //image.src = "banners/"+ large_images;
+ 
+  }
+  const loadImage = image => {
+    image.src = DBHelper.imageUrlForRestaurant(restaurant);
+    image.srcset = "banners/" + large_images + " 600w" + "," +  "banners/" + small_images +  " 300w";
+    //image.src = "banners/"+ large_images;
+  }
+
+  function onIntersection(entries, observer) {
+    entries.forEach(entry => {
+      if (entry.intersectionRatio > 0) {
+        loadImage(entry.target);
+        observer.unobserve(entry.target);
+      } else {
+        
+      }
+    });
+  }  
 
   const cuisine = document.getElementById("restaurant-cuisine");
   cuisine.innerHTML = restaurant.cuisine_type;
